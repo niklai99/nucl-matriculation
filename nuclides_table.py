@@ -36,6 +36,22 @@ def getData():
     
     return data
 
+
+def figureSetup(data):
+
+    # figure and axes
+    fig = plt.figure(figsize=(12, 6), dpi = 100)
+    ax = fig.add_subplot(1, 1, 1)
+
+    ax.set_title('Nuclides Chart')
+    ax.set_xlabel('N')
+    ax.set_ylabel('Z')
+    ax.set_xlim(0, data[-1][0])
+    ax.set_ylim(0, data[-1][1])
+
+    return fig, ax
+
+
 def main():
     
     data = getData()
@@ -52,24 +68,17 @@ def main():
         # store decay time as Z
         Z.append(data[i][2])
 
-    # figure and axes
-    fig = plt.figure(figsize=(12, 6), dpi = 100)
-    ax = fig.add_subplot(1, 1, 1)
+    # create figure and axes
+    fig, ax = figureSetup(data)
 
     # scatterplot
-    plot = ax.scatter(X, Y, c=np.array(Z), cmap='rainbow', norm=cl.LogNorm(), s=2)
-
-    ax.set_title('Nuclide Chart')
-    ax.set_xlabel('N')
-    ax.set_ylabel('Z')
-
-    ax.set_xlim(0, data[-1][0])
-    ax.set_ylim(0, data[-1][1])
-
-    fig.colorbar(plot, label = 'Decay time')
+    plot = ax.scatter(X, Y, c=np.array(Z), cmap='rainbow', norm=cl.LogNorm(), s=5)
 
     # add X=Y diagonal dashed line
     ax.plot(np.linspace(0, data[-1][1]), np.linspace(0, data[-1][1]), '--', color='black', alpha = 0.3)
+
+    # add the colorbar on the right
+    fig.colorbar(plot, label = 'Decay time')
 
     plt.show()
 
