@@ -56,8 +56,9 @@ def fetch_data(A,Z):
     return (X,Y,Y_e)
 
 def SEMF(Z,A,AV,AS,AC, AA):
-    b=AV*A-AS*A**(2/3) - AC*(Z**2)/A**(1/3) - AA*((A-Z -Z)**2)/A
+    #b=AV*A-AS*A**(2/3) - AC*(Z**2)/A**(1/3) - AA*((A-Z -Z)**2)/A
     #b=(AV-AA)*A - AS*A**(2./3) + 4.*AA*Z - (AC*A**(-1./3)+4.*AA*A**(-1))*Z**2
+    b=AV*A-AS*A**(2/3) - AC*Z*(Z-1)*A**(-1/3) - AA*(A-2*Z)**2/A
     return (Z*massP + (A-Z)*massN) - b
 
 def main():
@@ -77,7 +78,7 @@ def main():
                       X,Y,
                       sigma=Y_e, absolute_sigma=True,
                       #p0= (15.6,17.23, 0.7, 23.28),
-                      bounds=([15,17,0,23],[16,18,1,24]),)
+                      bounds=([14,16,0,17],[17,19,2,25]),)
     # plot
     fig=plt.figure()
     plt.errorbar(X,Y,Y_e,fmt='.')
