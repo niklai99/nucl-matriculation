@@ -1,6 +1,7 @@
-import sys
-sys.path.insert(0, './nuclide-data')
-from nuclide_data import *
+#import sys
+#sys.path.insert(0, './nuclide-data')
+#from nuclide_data import *
+from nuclideData.nuclide_data import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 from scipy.optimize import curve_fit
