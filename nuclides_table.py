@@ -1,10 +1,11 @@
-import sys
-sys.path.insert(0, './nuclide-data')
-from nuclide_data import *
 import matplotlib.pyplot as plt
 import matplotlib.colors as cl
 import numpy as np
 import uncertainties as unc
+#import sys
+#sys.path.insert(0, './nuclide-data')
+#from nuclide_data import *
+from nuclideData.nuclide_data import *
 
 
 def getData():
@@ -72,7 +73,7 @@ def main():
     fig, ax = figureSetup(data)
 
     # scatterplot
-    plot = ax.scatter(X, Y, c=np.array(Z), cmap='rainbow', norm=cl.LogNorm(), s=5)
+    plot = ax.scatter(X, Y, c=np.array(Z), cmap='rainbow', norm=cl.LogNorm(), s=5, marker = 's')
 
     # add X=Y diagonal dashed line
     ax.plot(np.linspace(0, data[-1][1]), np.linspace(0, data[-1][1]), '--', color='black', alpha = 0.3)
