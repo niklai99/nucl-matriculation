@@ -89,7 +89,13 @@ def make_fit(X, Y, Y_e, A_start):
                         sigma=Y_e, absolute_sigma=True,
                         #p0= (15.6,17.23, 0.7, 23.28),
                         bounds=([14,16,0,17],[17,19,2,25]),
-                  )
+                  ) 
+
+    residuals = []
+    chi2 = 0
+    for i in range(len(X)):
+        residuals.append(Y[i] - SEMF(X[i], A_start, *par))
+        chi2 += (residuals[i] / Y_e[i])**2
 
     # get parameters error from cov matrix
     par_error = []
@@ -103,10 +109,10 @@ def make_fit(X, Y, Y_e, A_start):
     fit_par = par
     fit_err = np.array(par_error)
 
-    return fit_par, fit_err
+    return fit_par, fit_err, chi2
 
 
-def make_plot(X, Y, Y_e, A_start, par):
+def make_plot(X, Y, Y_e, A_start, par, par_e, chi2):
 
     # figure config
     fig=plt.figure(figsize=(10,6))
@@ -116,6 +122,14 @@ def make_plot(X, Y, Y_e, A_start, par):
     XMIN = np.amin(X) - 1
     XMAX = np.amax(X) + 1
 
+    # text template for parameters
+    textA  = 'A  = ' + format(A_start, '1.0f')
+    textAV = 'AV = ' + format(par[0], '1.1f') + ' +/- ' + format(par_e[0],'1.1f')
+    textAS = 'AS = ' + format(par[1], '1.1f') + ' +/- ' + format(par_e[1],'1.1f')
+    textAC = 'AC = ' + format(par[2], '1.4f') + ' +/- ' + format(par_e[2],'1.4f')
+    textAA = 'AA = ' + format(par[3], '1.3f') + ' +/- ' + format(par_e[3],'1.3f')
+    chisq  = '$\chi^{2}$ / ndf = ' + format(chi2, '1.0f') + ' / ' + format(len(X) - len(par), '1.0f')
+
     # plot data
     ax.errorbar(x = X, y = Y, yerr = Y_e, marker = '.', markersize = 10,
                 elinewidth=1, color = '#000000', linewidth=0, capsize=2, label = 'Data')
@@ -123,6 +137,9 @@ def make_plot(X, Y, Y_e, A_start, par):
     # plot fit
     ax.plot(np.arange(XMIN, XMAX, 0.01), SEMF(np.arange(XMIN, XMAX, 0.01), A_start, *par), 
             color = '#FF4B00', linewidth = 2, linestyle = '-', label = 'Fit')
+
+    # display texts
+    ax.text(0.40, 0.50, textA + '\n\n' + textAV + '\n' + textAS + '\n' + textAC + '\n' + textAA + '\n\n' + chisq, fontsize = 14, color = '#000000', transform = ax.transAxes)
 
     # plot title
     ax.set_title('SEMF FIT')
@@ -145,15 +162,15 @@ def main():
     #print(nuc(44,101))
     #print(weight(44,101))
 
-    Z_start = 44 # Z di partenza
-    A_start = 101 # A di partenza
+    Z_start = 40 # Z di partenza
+    A_start = 91 # A di partenza
 
     # get data
     X, Y, Y_e = fetch_data(A_start,Z_start)
 
-    par, par_e = make_fit(X, Y, Y_e, A_start)
+    par, par_e, chi2 = make_fit(X, Y, Y_e, A_start)
 
-    fig, ax = make_plot(X, Y, Y_e, A_start, par)
+    fig, ax = make_plot(X, Y, Y_e, A_start, par, par_e, chi2)
 
     # print results
     print(par)
