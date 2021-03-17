@@ -87,6 +87,7 @@ def main():
 
     # print results
     print(par)
+    print(cov)
     print(X)
     print(Y)
 
