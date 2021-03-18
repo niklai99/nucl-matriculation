@@ -10,7 +10,8 @@ from nuclideData.nuclide_data import *
 
 def getData():
 
-    data=[] 
+    unstableData=[] 
+    stableData=[]
     Zmax=119
 
     # loop over Z
@@ -25,17 +26,19 @@ def getData():
             A = iso[j]
             N = iso[j] - Z
 
-            # get decay time 
-            decTime = nuc(Z, A)['half-life']
+            if (nuc(Z,A)['stable']==False):
+
+                # get decay time 
+                decTime = nuc(Z, A)['half-life']
+                # store data
+                unstableData.append((N,Z,decTime))
 
             # fix "inf" for stable nuclides
-            if(nuc(Z,A)['stable']==True):
-                decTime=10e26
-                
-            # store data
-            data.append((N,Z,decTime))
+            if(nuc(Z,A)['stable']==True):   
+                # store data
+                stableData.append((N,Z))
     
-    return data
+    return unstableData, stableData
 
 
 def figureSetup(data):
@@ -55,31 +58,41 @@ def figureSetup(data):
 
 def main():
     
-    data = getData()
+    unstableData, stableData = getData()
 
-    X=[]
-    Y=[]
-    Z=[]
+    unstableX=[]
+    unstableY=[]
+    unstableZ=[]
 
-    for i in range(len(data)):
+    stableX=[]
+    stableY=[]
+
+    for i in range(len(unstableData)):
         # store N as X
-        X.append(data[i][0])
+        unstableX.append(unstableData[i][0])
         # store Z as Y
-        Y.append(data[i][1])
+        unstableY.append(unstableData[i][1])
         # store decay time as Z
-        Z.append(data[i][2])
+        unstableZ.append(unstableData[i][2])
+
+    for i in range(len(stableData)):
+        # store N as X
+        stableX.append(stableData[i][0])
+        # store Z as Y
+        stableY.append(stableData[i][1])
 
     # create figure and axes
-    fig, ax = figureSetup(data)
+    fig, ax = figureSetup(unstableData)
 
     # scatterplot
-    plot = ax.scatter(X, Y, c=np.array(Z), cmap='rainbow', norm=cl.LogNorm(), s=5, marker = 's')
+    unstablePlot = ax.scatter(unstableX, unstableY, c=np.array(unstableZ), cmap='rainbow', norm=cl.LogNorm(), s=5, marker = 's')
+    stablePlot = ax.scatter(stableX, stableY, color='black', s=5, marker = 's')
 
     # add X=Y diagonal dashed line
-    ax.plot(np.linspace(0, data[-1][1]), np.linspace(0, data[-1][1]), '--', color='black', alpha = 0.3)
+    ax.plot(np.linspace(0, unstableData[-1][1]), np.linspace(0, unstableData[-1][1]), '--', color='black', alpha = 0.3)
 
     # add the colorbar on the right
-    fig.colorbar(plot, label = 'Decay time')
+    fig.colorbar(unstablePlot, label = 'Decay time')
 
     plt.show()
 
