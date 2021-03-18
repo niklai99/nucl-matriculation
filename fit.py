@@ -94,25 +94,19 @@ def make_fit(X, Y, Y_e, A_start):
                         bounds=([14,16,10],[17,19,35])
                   ) 
 
-    residuals = []
-    chi2 = 0
-    for i in range(len(X)):
-        residuals.append(Y[i] - SEMF(X[i], A_start, par[0], par[1], Ac, par[2]))
-        chi2 += (residuals[i] / Y_e[i])**2
-
+    residuals = np.array(Y) - SEMF(np.array(X), A_start, par[0], par[1], Ac, par[2])
+    chi2 = np.sum((residuals / np.array(Y_e))**2)
     # get parameters error from cov matrix
-    par_error = []
+    par_error = np.zeros(len(par))
 
     for i in range(len(par)):
         try:
-            par_error.append(np.absolute(cov[i][i])**0.5)
+            par_error[i] = cov[i][i]**0.5
         except:
-            par_error.append( 0.00 )
+            par_error[i] = 0.00
 
-    fit_par = par
-    fit_err = np.array(par_error)
 
-    return fit_par, fit_err, chi2
+    return par, par_error, chi2
 
 
 def make_plot(X, Y, Y_e, A_start, par, par_e, chi2):
