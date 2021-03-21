@@ -17,9 +17,9 @@ Ac = 0.714 # MeV
 def fetch_data(A,Z):
 
     # how many points [left]
-    nL = 2
+    nL = 3
     # how many points [right]
-    nR = 2
+    nR = 3
 
     Y=[]
     Y_e=[]
@@ -160,8 +160,8 @@ def main():
     #print(nuc(44,101))
     #print(weight(44,101))
 
-    Z_start = 37 # Z di partenza
-    A_start = 85 # A di partenza
+    Z_start = 48 # Z di partenza
+    A_start = 111 # A di partenza
 
     # get data
     X, Y, Y_e = fetch_data(A_start,Z_start)
