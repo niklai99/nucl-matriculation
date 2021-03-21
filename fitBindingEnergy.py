@@ -5,7 +5,6 @@ import numpy as np
 import re
 from operator import itemgetter
 from itertools import groupby
-from statistics import mean
 
 massP = 938.27208816 # Mev/c^2
 massP_e = 0.00000029 # Mev/c^2
@@ -31,12 +30,7 @@ def getIsotopes():
             # get N from A of current isotope
             A = iso[j]
             N = iso[j] - Z
-           
-            # # save only stable isotopes
-            # if(nuc(Z,A)['stable']==True):
-            #     # store data
-            #     data.append((Z, A))
-
+        
             data.append( (Z, A) )
 
     # take second element for sort
@@ -95,7 +89,6 @@ def computeMean(par):
     Zs = [[x for x,y,z,w in g] for k, g in  groupby(par,key=itemgetter(1))]
     # group binding energy by A
     BAs = [[z for x,y,z,w in g] for k, g in  groupby(par,key=itemgetter(1))]
-    # BAs_e = [[w for x,y,z,w in g] for k, g in  groupby(par,key=itemgetter(1))]
     # group weights of binding energy by A
     W = [[w**-2 for x,y,z,w in g] for k, g in  groupby(par,key=itemgetter(1))]
 
