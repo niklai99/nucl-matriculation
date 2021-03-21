@@ -47,9 +47,11 @@ def computeB(data):
 
     par = []
 
+    # loop over all data 
     for i in range(0, len(data)):
-
+        # check whether 'weight' key is in dictionary (does not happen sometimes...)
         if 'weight' in nuc(data[i][0], data[i][1]):
+            # check whether 'weight' string is not empty (sometimes it is...)
             if nuc(data[i][0], data[i][1])['weight'] != '':
     
                 # get sperimental mass
@@ -131,7 +133,6 @@ def makeFit(X, Zs, Y, Y_e):
 
     # get parameters error from cov matrix
     par_error = np.zeros(len(par))
-
     for i in range(len(par)):
         try:
             par_error[i] = cov[i][i]**0.5
