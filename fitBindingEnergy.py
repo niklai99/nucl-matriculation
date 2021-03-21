@@ -123,8 +123,8 @@ def makeFit(X, Zs, Y, Y_e):
                         BINDING,
                         xdata = [X, Zs], ydata = Y,
                         sigma=Y_e, absolute_sigma=True,
-                        #p0= (15.6,17.23, 0.7, 23.28),
-                        #bounds=([14,16,0,17],[17,19,2,25])
+                        p0= (15.8, 18.3, 0.714, 23.28),
+                        bounds=([14,16,0.7,17],[17,22,0.8,30])
                     )
 
     # residuals and chi2
