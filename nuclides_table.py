@@ -10,18 +10,18 @@ from nuclideData.nuclide_data import *
 
 def getData():
 
-    unstableData=[] 
+    unstableData=[]
     stableData=[]
     Zmax=119
 
     # loop over Z
-    for Z in range(0,Zmax):
+    for Z in range(Zmax):
 
         iso = isotopes[Z]
 
         # loop over isotopes for current Z
-        for j in range(0,len(iso)):
-            
+        for j in range(len(iso)):
+
             # get N from A of current isotope
             A = iso[j]
             N = iso[j] - Z
@@ -37,7 +37,7 @@ def getData():
             if(nuc(Z,A)['stable']==True):   
                 # store data
                 stableData.append((N,Z))
-    
+
     return unstableData, stableData
 
 

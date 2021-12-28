@@ -65,9 +65,9 @@ for line in open(data_file):
         current_nuclide.append(line.rstrip())
 
 
-nist_nuclide_processed_list = []
-for raw_chunk in nist_nuclide_raw_list:
-    nist_nuclide_processed_list.append( parse_one_chunk(raw_chunk) )
+nist_nuclide_processed_list = [
+    parse_one_chunk(raw_chunk) for raw_chunk in nist_nuclide_raw_list
+]
 
 nist_per_element = {}
 for nuclide in nist_nuclide_processed_list:
@@ -75,9 +75,7 @@ for nuclide in nist_nuclide_processed_list:
     try:
         nist_per_element[Z].append(nuclide)
     except KeyError:
-        nist_per_element[Z] = []
-        nist_per_element[Z].append(nuclide)
-
+        nist_per_element[Z] = [nuclide]
 nist_nuclides = {}
 for nuclide in nist_nuclide_processed_list:
     Z = nuclide['Atomic Number']
@@ -128,10 +126,11 @@ def process_abundance(s):
         return nndc_abun(s,'%') / 100.
 
 def parse_one_wallet_line(line):
-    d = {}
-    d['A'] = int(line[1:4])
-    d['Z'] = int(line[6:9])
-    d['symbol'] = line[10:12].strip().title()
+    d = {
+        'A': int(line[1:4]),
+        'Z': int(line[6:9]),
+        'symbol': line[10:12].strip().title(),
+    }
 
     d['mass excess'] = unc.ufloat(*map(float, (line[97:105], line[105:113]))) # in MeV
     d['systematics mass'] = (line[114] == 'S')
@@ -184,16 +183,14 @@ for el in wallet_nuclide_processed_list:
     Z, A, E = [el[i] for i in ['Z', 'A', 'excitation energy']]
 
     # Pick the nuclide (Z,A) (or create new entry)
-    if not ((Z,A) in nuclides):
+    if (Z, A) not in nuclides:
         nuclides[(Z,A)] = {}
 
     isomers = nuclides[(Z,A)]
 
     # Pick the isomer [(Z,A)][E] (or create new entry)
-    if not (E in isomers):
-        isomers[E] = {}
-        isomers[E]['decay modes'] = {}
-
+    if E not in isomers:
+        isomers[E] = {'decay modes': {}}
         isomer = isomers[E]
 
         # nuclide data not associated with decay
@@ -293,9 +290,9 @@ for line in open(mat_file):
 isotopes = {}
 for (Z,A) in nuclides:
 
-    if not (Z in isotopes):
+    if Z not in isotopes:
         isotopes[Z] = []
-    
+
     isotopes[Z].append(copy.copy(A))
 
     isotopes[Z].sort()
@@ -422,8 +419,8 @@ class Nuclide:
                             s2 = s2.strip()
                         else:
                             s1 = ''.join(filter(lambda x: x in string.ascii_letters, nuc_id))
-                            s2 = ''.join(filter(lambda x: not (x in string.ascii_letters), nuc_id)).strip()
-                            
+                            s2 = ''.join(filter(lambda x: x not in string.ascii_letters, nuc_id)).strip()
+                                                    
 
                         # Not sure of the order of s1 & s2,
                         #  so try one, then the other.
@@ -433,11 +430,11 @@ class Nuclide:
                         except:
                             self.Z = sym2z[s2.title()]
                             self.A = int(s1)
-                                
-                        
+
+
                     else: # assume it is a ZAID string
                         self.Z, self.A = zaid2za(nuc_id)
-        
+
         # Metastable can be specified by either E, metastable flag, or A > 400.
         #  If flag is given but E is not, then set E to inf as
         #  an indication that it is not stable, but that the exact
@@ -460,8 +457,8 @@ class Nuclide:
         if (self.E is np.inf and 
                self.__repr__() in default_isomer_E.keys()):
             self.E = default_isomer_E[self.__repr__()]
-            
-            
+
+
         try:
             self.weight = return_nominal_value(self.Z, self.A, self.E, 'weight')
         except:

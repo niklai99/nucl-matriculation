@@ -264,8 +264,8 @@ class TestNuclideData(unittest.TestCase):
             'Fm-255 ' : 9936,
            }
 
-        for nuc_id in nuc_ids:
-            assert nuclide_data.Nuclide(nuc_id).mat == nuc_ids[nuc_id]
+        for nuc_id, value in nuc_ids.items():
+            assert nuclide_data.Nuclide(nuc_id).mat == value
 
 
 if __name__ == '__main__':
